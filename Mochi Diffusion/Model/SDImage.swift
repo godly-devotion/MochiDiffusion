@@ -111,13 +111,9 @@ extension SDImage {
             1,
             nil
         ) else { return nil }
-        let iptc = await [
-            kCGImagePropertyIPTCCaptionAbstract: metadata(),
-            kCGImagePropertyIPTCOriginatingProgram: "Mochi Diffusion",
-            kCGImagePropertyIPTCProgramVersion: "\(await NSApplication.appVersion)"
-        ]
-        let meta = [kCGImagePropertyIPTCDictionary: iptc]
-        CGImageDestinationAddImage(destination, image, meta as CFDictionary)
+        let metadata = CreateMetadata(positivePrompt: prompt, negativePrompt: negativePrompt, width: width, height: height, seed: seed, guidanceScale: Float(guidanceScale), scheduler: scheduler, stepCount: steps, currentModel: model, upscaler: upscaler, currentStyle: "", computeUnits: mlComputeUnit ?? .cpuAndGPU)
+
+         CGImageDestinationAddImage(destination, image, metadata)
         guard CGImageDestinationFinalize(destination) else { return nil }
         return data as Data
     }
